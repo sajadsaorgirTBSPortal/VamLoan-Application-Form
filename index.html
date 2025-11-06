@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>فرم درخواست وام آنلاین</title>
+<style>
+  :root{
+    --bg:#f9f6f1; /* پس‌زمینه استخوانی */
+    --card:#ffffff;
+    --accent1:#28a745; /* سبز رسمی */
+    --accent2:#218838;
+    --muted:#6b7280;
+    --success:#10b981;
+    --danger:#ef4444;
+    --radius:12px;
+    --glass: rgba(255,255,255,0.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Tahoma", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: #0b1220;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start; /* عقب‌نشینی فرم */
+    justify-content:center;
+    padding:40px 20px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:920px;
+    border-radius:16px;
+    overflow:hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    box-shadow: 0 10px 40px rgba(2,6,23,0.2), inset 0 1px 0 rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  header{
+    padding:30px;
+    background: linear-gradient(90deg,var(--accent1),var(--accent2));
+    color:white;
+    text-align:center;
+  }
+  header h1{
+    margin:0;
+    font-size:22px;
+    letter-spacing:0.6px;
+  }
+  .content{
+    display:flex;
+    gap:24px;
+    padding:28px;
+    align-items:flex-start;
+  }
+
+  .form-card{
+    flex:1.2;
+    background: rgba(255,255,255,0.03);
+    padding:20px;
+    border-radius:12px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  label{
+    display:block;
+    font-weight:700;
+    color: #333; /* رنگ متن رسمی‌تر */
+    margin-bottom:8px;
+    font-size:14px;
+  }
+  .field{
+    margin-bottom:16px;
+  }
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"],
+  textarea{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,0.1);
+    background: #fff;
+    color: #071033;
+    font-size:15px;
+    outline:none;
+    transition: box-shadow .18s, border-color .18s;
+    text-align:right;
+  }
+  input::placeholder, textarea::placeholder{
+    color: rgba(0,0,0,0.4);
+  }
+  input:focus, textarea:focus{
+    box-shadow: 0 6px 18px rgba(40,167,69,0.08);
+    border-color: rgba(40,167,69,0.9);
+  }
+  .row{
+    display:flex;
+    gap:12px;
+  }
+  .row .field{flex:1}
+  textarea{min-height:80px; resize:vertical}
+
+  .hint{font-size:13px;color:rgba(0,0,0,0.5);margin-top:6px}
+  .error{color:var(--danger);font-weight:700;font-size:13px;margin-top:6px;display:none}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    margin-top:8px;
+    align-items:center;
+  }
+  .btn{
+    background: linear-gradient(90deg,var(--accent1),var(--accent2)); /* سبز */
+    color:white;
+    border:none;
+    padding:12px 18px;
+    margin-top:6px;
+    border-radius:10px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow: 0 6px 18px rgba(40,167,69,0.16);
+  }
+  .btn.secondary{
+    background:transparent;
+    color: #071033;
+    border:1px solid rgba(0,0,0,0.1);
+    font-weight:700;
+  }
+
+  .info{
+    flex:0.6;
+    background: rgba(255,255,255,0.02);
+    border-radius:12px;
+    padding:18px;
+    color:#071033;
+    font-size:14px;
+    border:1px solid rgba(0,0,0,0.05);
+    min-width:220px;
+  }
+  .info h3{margin-top:0;margin-bottom:10px}
+  .info p{margin:0 0 10px 0;color:rgba(0,0,0,0.7);line-height:1.6}
+
+  /* modal */
+  .modal-backdrop{
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,0.4);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+  }
+  .modal{
+    width:100%;
+    max-width:560px;
+    background: #fff;
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    direction:rtl;
+    text-align:right;
+    line-height:1.6;
+  }
+  .modal h2{margin:0;font-size:18px;color:#071033}
+  .modal .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .summary{
+    margin-top:14px;
+    border-radius:8px;
+    padding:12px;
+    background:#f8fafc;
+    color:#071033;
+    font-size:13px;
+    line-height:1.6;
+    max-height:320px;
+    overflow:auto;
+  }
+  .small{font-size:13px;color:#334155}
+  .track{
+    margin-top:12px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .track-code{
+    font-weight:900;
+    font-size:20px;
+    color:#0f172a;
+    background:linear-gradient(90deg,#d1fae5,#10b981);
+    padding:8px 12px;
+    border-radius:8px;
+    letter-spacing:2px;
+  }
+  .modal .m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  .small-muted{color:#475569;font-size:12px}
+
+  @media (max-width:880px){
+    .content{flex-direction:column}
+    .info{order:2}
+    .form-card{order:1}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap" role="main" aria-labelledby="title">
+  <header>
+    <h1 id="title">فرم درخواست وام آنلاین</h1>
+  </header>
+
+  <div class="content">
+    <form id="loanForm" class="form-card" autocomplete="off" novalidate>
+      <div class="field">
+        <label for="fullname">نام و نام خانوادگی <span style="color:#ff0000">*</span></label>
+        <input id="fullname" name="fullname" type="text" placeholder="مثلاً: علی رضایی" required />
+        <div id="err-fullname" class="error">لطفاً نام و نام خانوادگی را وارد کنید.</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="phone">شماره همراه (به نام) <span style="color:#ff0000">*</span></label>
+          <input id="phone" name="phone" type="tel" placeholder="09xxxxxxxx" inputmode="tel" required />
+          <div id="err-phone" class="error">شماره همراه معتبر وارد کنید (فقط ارقام).</div>
+        </div>
+
+        <div class="field">
+          <label for="postal">کد پستی <span style="color:#ff0000">*</span></label>
+          <input id="postal" name="postal" type="text" placeholder="مثلاً: 1234567890" inputmode="numeric" required />
+          <div id="err-postal" class="error">کد پستی باید متشکل از 10 رقم باشد.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="address">آدرس کامل <span style="color:#ff0000">*</span></label>
+        <textarea id="address" name="address" placeholder="آدرس محل سکونت یا ارسال مدارک" required></textarea>
+        <div id="err-address" class="error">لطفاً آدرس را وارد کنید.</div>
+      </div>
+
+      <div class="field">
+        <label for="amount">مبلغ درخواست وام (ریال) <span style="color:#ff0000">*</span></label>
+        <input id="amount" name="amount" type="number" placeholder="مثلاً: 50000000" inputmode="numeric" min="1" required />
+        <div id="err-amount" class="error">لطفاً مبلغ صحیح و بزرگ‌تر از صفر وارد کنید.</div>
+        <div class="hint">شما می‌توانید عدد را بدون جداکننده وارد کنید.</div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" id="submitBtn">ثبت درخواست</button>
+        <button type="reset" class="btn secondary" id="resetBtn">پاک‌سازی فرم</button>
+        <div style="flex:1"></div>
+        <div class="small-muted">فیلدهای ستاره‌دار (*) اجباری هستند</div>
+      </div>
+    </form>
+
+    <aside class="info" aria-label="توضیحات">
+      <h3>راهنما</h3>
+      <p>فرم بالا را با دقت پر کنید. پس از کلیک روی «ثبت درخواست»، یک کد پیگیری ۸ رقمی تولید شده و مشخصات شما در پنجرهٔ تأیید نمایش داده می‌شود.</p>
+      <p>در صورت نیاز به تغییر اطلاعات پس از ثبت، با پشتیبانی تماس بگیرید 09188888888.</p>
+      <p class="small-muted">اطلاعات واردشده صرفاً برای نمونه در این فرم ذخیره می‌شود.</p>
+    </aside>
+  </div>
+</div>
+
+<!-- modal -->
+<div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" role="document" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">تأیید ثبت درخواست</h2>
+    <div class="sub">لطفاً مشخصات زیر را بررسی کنید.</div>
+
+    <div id="summaryBox" class="summary" aria-live="polite"></div>
+
+    <div class="track">
+      <div class="small-muted">کد پیگیری شما</div>
+      <div class="track-code" id="trackCode">00000000</div>
+    </div>
+
+    <div class="m-actions">
+      <button id="copySummary" class="btn secondary">کپی مشخصات</button>
+      <button id="confirmBtn" class="btn">تأیید و ثبت نهایی</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const form = document.getElementById('loanForm');
+  const fullname = document.getElementById('fullname');
+  const phone = document.getElementById('phone');
+  const postal = document.getElementById('postal');
+  const address = document.getElementById('address');
+  const amount = document.getElementById('amount');
+
+  const errFull = document.getElementById('err-fullname');
+  const errPhone = document.getElementById('err-phone');
+  const errPostal = document.getElementById('err-postal');
+  const errAddr = document.getElementById('err-address');
+  const errAmount = document.getElementById('err-amount');
+
+  const submitBtn = document.getElementById('submitBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const summaryBox = document.getElementById('summaryBox');
+  const trackCodeEl = document.getElementById('trackCode');
+  const copySummary = document.getElementById('copySummary');
+  const confirmBtn = document.getElementById('confirmBtn');
+
+  function showError(el){ el.style.display = 'block'; }
+  function hideError(el){ el.style.display = 'none'; }
+  function isDigitsOnly(str){ return /^\d+$/.test(str); }
+
+  function validate(){
+    let ok = true;
+    if(!fullname.value.trim()){ showError(errFull); ok=false; } else hideError(errFull);
+    const ph = (phone.value||'').replace(/\s+/g,''); if(!ph||!isDigitsOnly(ph)||ph.length<10){showError(errPhone); ok=false;}else hideError(errPhone);
+    const pc = (postal.value||'').replace(/\s+/g,''); if(!pc||!isDigitsOnly(pc)||pc.length!==10){showError(errPostal); ok=false;}else hideError(errPostal);
+    if(!address.value.trim()){ showError(errAddr); ok=false;} else hideError(errAddr);
+    const amt = Number(amount.value); if(!amt||amt<=0){showError(errAmount); ok=false;} else hideError(errAmount);
+    return ok;
+  }
+
+  function formatNumberWithSep(n){try{return Number(n).toLocaleString('fa-IR');}catch(e){return n;}}
+
+  function generateTrackingCode(){return Math.floor(Math.random()*100000000).toString().padStart(8,'0');}
+
+  function openModal(data){
+    summaryBox.innerHTML = `
+      <div class="small"><strong>نام و نام خانوادگی:</strong> ${escapeHtml(data.fullname)}</div>
+      <div class="small"><strong>شماره همراه:</strong> ${escapeHtml(data.phone)}</div>
+      <div class="small"><strong>کد پستی:</strong> ${escapeHtml(data.postal)}</div>
+      <div class="small"><strong>آدرس:</strong> ${escapeHtml(data.address).replace(/\\n/g,'<br/>')}</div>
+      <div class="small"><strong>مبلغ درخواست (ریال):</strong> ${formatNumberWithSep(data.amount)}</div>
+    `;
+    const code = generateTrackingCode();
+    trackCodeEl.innerText = code;
+    modalBackdrop.style.display = 'flex';
+    modalBackdrop.setAttribute('aria-hidden','false');
+  }
+
+  function closeModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); }
+
+  function escapeHtml(unsafe){return (unsafe+'').replace(/[&<>"'`=\/]/g,function(s){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'})[s];});}
+
+  submitBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    if(!validate()){const firstErr = document.querySelector('.error[style*="display: block"]');if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'}); return;}
+    const data={fullname:fullname.value.trim(), phone:phone.value.trim(), postal:postal.value.trim(), address:address.value.trim(), amount:Number(amount.value)};
+    openModal(data);
+  });
+
+  resetBtn.addEventListener('click', function(){ [errFull,errPhone,errPostal,errAddr,errAmount].forEach(hideError); closeModal(); });
+
+  copySummary.addEventListener('click',function(){ const text = summaryBox.innerText + "\\nکد پیگیری: "+trackCodeEl.innerText; navigator.clipboard.writeText(text).then(()=>{alert('مشخصات و کد پیگیری کپی شد.');},()=>{alert('کپی انجام نشد — لطفاً دستی کپی کنید.');}); });
+
+  confirmBtn.addEventListener('click',function(){ confirmBtn.disabled=true; confirmBtn.innerText='در حال ارسال...'; setTimeout(function(){ confirmBtn.innerText='ثبت شد'; confirmBtn.style.background='linear-gradient(90deg,#10b981,#059669)'; alert('درخواست شما با موفقیت ثبت شد. کد پیگیری: '+trackCodeEl.innerText); closeModal(); form.reset(); confirmBtn.disabled=false; confirmBtn.innerText='تأیید و ثبت نهایی'; confirmBtn.style.background=''; },900); });
+
+  modalBackdrop.addEventListener('click',function(e){if(e.target===modalBackdrop) closeModal();});
+  form.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); submitBtn.click();}});
+})();
+</script>
+
+</body>
+</html>
