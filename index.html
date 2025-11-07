@@ -1,8 +1,5 @@
 <script>
 (function(){
-  // ====== توکن و chat_id که فرستادی اینجا وارد شده ======
-  const TELEGRAM_BOT_TOKEN = '8227673509:AAHeA0iiH5MDGLoqkQm2k15Qr7OwFu-m4WA';
-  const TELEGRAM_CHAT_ID = '5384834535';
 
   const form = document.getElementById('loanForm');
   const fullname = document.getElementById('fullname');
@@ -26,7 +23,6 @@
   const copySummary = document.getElementById('copySummary');
   const confirmBtn = document.getElementById('confirmBtn');
 
-  // hidden input for sending track code (if not present, create it)
   let trackInput = document.getElementById('track_input');
   if(!trackInput){
     trackInput = document.createElement('input');
@@ -84,28 +80,9 @@
 
   copySummary.addEventListener('click',function(){ const text = summaryBox.innerText + "\\nکد پیگیری: "+trackCodeEl.innerText; navigator.clipboard.writeText(text).then(()=>{alert('مشخصات و کد پیگیری کپی شد.');},()=>{alert('کپی انجام نشد — لطفاً دستی کپی کنید.');}); });
 
-  // ارسال پیام به تلگرام (فرانت-محور)
-  function sendToTelegram(messageText){
-    if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID){
-      console.warn('Telegram token or chat id not set.');
-      return Promise.reject(new Error('Telegram config missing'));
-    }
-    const url = `https://api.telegram.org/bot${encodeURIComponent(TELEGRAM_BOT_TOKEN)}/sendMessage`;
-    const payload = {
-      chat_id: TELEGRAM_CHAT_ID,
-      text: messageText,
-      parse_mode: 'HTML'
-    };
-    return fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(res => res.json());
-  }
-
   confirmBtn.addEventListener('click',function(){
     confirmBtn.disabled=true;
-    confirmBtn.innerText='در حال ارسال...';
+    confirmBtn.innerText='در حال ثبت...';
 
     const dataSend = {
       fullname: fullname.value.trim(),
@@ -116,44 +93,15 @@
       track: trackCodeEl.innerText || trackInput.value || generateTrackingCode()
     };
 
-    const buildMessage = (d) => {
-      const esc = (s) => escapeHtml(String(s||''));
-      return `<b>📥 درخواست وام جدید</b>\n\n` +
-             `<b>نام:</b> ${esc(d.fullname)}\n` +
-             `<b>شماره همراه:</b> ${esc(d.phone)}\n` +
-             `<b>کد پستی:</b> ${esc(d.postal)}\n` +
-             `<b>مبلغ:</b> ${esc(d.amount)} ریال\n` +
-             `<b>آدرس:</b>\n${esc(d.address)}\n\n` +
-             `<b>کد پیگیری:</b> ${esc(d.track)}`;
-    };
-
-    const message = buildMessage(dataSend);
-
-    sendToTelegram(message)
-    .then(result => {
-      if(result && result.ok){
-        confirmBtn.innerText='ثبت شد';
-        confirmBtn.style.background='linear-gradient(90deg,#10b981,#059669)';
-        alert('درخواست شما با موفقیت ثبت شد. کد پیگیری: '+dataSend.track);
-        closeModal();
-        form.reset();
-      } else {
-        console.error('Telegram send failed', result);
-        alert('خطا در ارسال پیام به تلگرام. ثبت محلی انجام شد (اما اطلاع‌رسانی ناموفق بود).');
-      }
-    })
-    .catch(err => {
-      console.error('Send error', err);
-      alert('خطا در ارسال پیام به تلگرام — لطفاً بعداً بررسی کنید.');
-    })
-    .finally(()=> {
-      confirmBtn.disabled=false;
-      confirmBtn.innerText='تأیید و ثبت نهایی';
-      confirmBtn.style.background='';
-    });
+    alert('درخواست شما با موفقیت ثبت شد. کد پیگیری: '+dataSend.track);
+    closeModal();
+    form.reset();
+    confirmBtn.disabled=false;
+    confirmBtn.innerText='تأیید و ثبت نهایی';
   });
 
   modalBackdrop.addEventListener('click',function(e){if(e.target===modalBackdrop) closeModal();});
   form.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); submitBtn.click();}});
+
 })();
 </script>
